@@ -1,16 +1,3 @@
-# https://github.com/PaulC91/crime-watch/blob/master/app.R
-# https://rstudio.github.io/leaflet/shiny.html
-# https://shiny.rstudio.com/articles/isolation.html
-# https://rstudio.github.io/leaflet/popups.html
-
-# tile selections
-# https://leaflet-extras.github.io/leaflet-providers/preview/
-
-# jitter coords
-# https://stackoverflow.com/questions/36469379/multiple-markers-on-same-coordinate
-
-# if null example
-# https://shiny.rstudio.com/articles/req.html
 
 # needs action button input.
 library(shiny)
@@ -24,11 +11,13 @@ library(RColorBrewer)
 library(htmltools)
 library(shinyjs)
 
-api_key = "QPpbkg7VO78Vetq4ak1iLmNv7"
-api_secret_key = "Bklnhk7q6ba2evPJWJmqxF5WeK4IeGoh5QucAYFotyo5z7aMgI"
-access_token = "51135752-GYoO7ROO36WetGHfmq4l5ieO2WwkUqhnPDjlaTFyj"
-access_token_secret = "kYih6fgJZJA7CliUiZ4ffHTa8jChDAUgOZ0S8DyBbL5j0"
+# for mine eyes only, sry.
+api_key = "REDACTED"
+api_secret_key = "REDACTED"
+access_token = "REDACTED"
+access_token_secret = "REDACTED"
 
+# token for twitter api
 me_token <- create_token(
    app = "pubhealth_tweetmap",
    consumer_key = api_key,
@@ -36,8 +25,10 @@ me_token <- create_token(
    access_token = access_token,
    access_secret = access_token_secret)
 
+# sentiment dictionary
 afinn_dict <- read_csv("afinn_dict.csv")
 
+# shiny ui
 ui <- bootstrapPage(
    useShinyjs(),
    tags$style(type = "text/css",
@@ -65,7 +56,7 @@ ui <- bootstrapPage(
    checkboxInput("legend", "", TRUE)
 
 )
-
+# server
 server <- function(input, output, session){
    output$mapo <- renderLeaflet({
       leaflet() %>%
@@ -92,6 +83,7 @@ server <- function(input, output, session){
                          tw_geo <- lat_lng(tw, coords = c("coords_coords",
                                                           "bbox_coords", "geo_coords"))
 
+                         # tweet pre-process and aggregate.
           tw_geo_map <- tw_geo %>%
       dplyr::select(screen_name, created_at, text, lat, lng) %>%
                             filter(lat != 'NA' | lng != 'NA')
@@ -127,7 +119,7 @@ server <- function(input, output, session){
                             mutate(lng = jitter(lng, factor = .005))
 
                       })
-
+# progress bar
                       for (i in filteredData()){
                          incProgress(1/5)
 
@@ -138,13 +130,13 @@ server <- function(input, output, session){
       colorpal <- reactive({
          colorNumeric(input$colors, domain = c(-5, 5))
       })
-
+# logic no NA keywords.
       if (dim(filteredData()) == 0) {
          output$no_data <-
             renderText({"No data for that keyword, try again?"})
          delay(3000, session$reload())
       }else{
-
+# map
          observe({
             pal <-  colorpal()
             leafletProxy("mapo", data = filteredData()) %>%
