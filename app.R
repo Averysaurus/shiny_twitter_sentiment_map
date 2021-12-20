@@ -73,13 +73,13 @@ server <- function(input, output, session){
                    value = 2/5, {
 
                       filteredData <- reactive({
-
+# pull tweets from api 
                          tw <- search_tweets(isolate(input$keyword),
                                              n = 3000, token = me_token,
                                              geocode="37.8044,-122.2712,50km",
                                              include_rts = FALSE,
                                              retryonratelimit = FALSE, lang = "en")
-
+                        # pull geocodes
                          tw_geo <- lat_lng(tw, coords = c("coords_coords",
                                                           "bbox_coords", "geo_coords"))
 
