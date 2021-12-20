@@ -1,5 +1,5 @@
 
-# needs action button input.
+# libraries.
 library(shiny)
 library(leaflet)
 library(leaflet.extras)
@@ -11,7 +11,7 @@ library(RColorBrewer)
 library(htmltools)
 library(shinyjs)
 
-# for mine eyes only, sry.
+# for mine eyes only.
 api_key = "REDACTED"
 api_secret_key = "REDACTED"
 access_token = "REDACTED"
